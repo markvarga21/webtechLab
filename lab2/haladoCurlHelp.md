@@ -1,51 +1,66 @@
-# Halado ```curl``` keresek 
-## Urlap adatok kuldese
-- urlapok altalanos bemutatasa
-    - ha nem titkos az elkuldeni kivant informacio, akkor mehetnek csak siman query parameterkent
-    - egyebkent ha bejelentkezesrol, vagy hasonlorol van szo, akkor inkabb body-ban szokas kuldeni az ilyen informaciokat
-### GET keresek
+# Haladó `curl` kérések
+
+## Űrlap adatok küldése
+
+- űrlapok általános bemutatása
+  - ha nem titkos az elküldeni kívánt információ, akkor mehetnek csak simán query parameterként
+  - egyébként ha bejelentkezésről, vagy hasonlóról van szó, akkor inkább a body-ban szokás elküldeni az ilyen információkat
+
+### `GET` kérések
+
 ```
 curl --insecure https://blackwells.co.uk/bookshop/search?keyword=sherlock+holmes\&pubDateFrom=2022\&pubDateTo=2023 -o search.html -v
 ```
-- a ```-k``` kapcsolo jelzesevel a curl egy insecure kerest fog kuldeni, mivel maskeppen nem tudunk kerest kuldeni, mivel TLS secured az oldal (https)
-- escaping character, de idezojelekkel megint ki lehet jatszani
+
+- a `-k` kapcsoló jelzésével a curl egy insecure kérést fog küldeni, mivel máskeppen nem tudunk kérést küldeni, mivel TLS secured az oldal (`https`)
+- escaping character, de idézőjelekkel megint ki lehet játszani
 - query parameterek
-- ossze lehet hasonlitani a ```search.html``` fajlt az aktualis oldallal
+- össze lehet hasonlítani a `search.html` fájlt az aktuális oldallal
+
 ```
 curl --insecure --get https://blackwells.co.uk/bookshop/search -d keyword=sherlock+holmes -d pubDateFrom=2022 -d pubDateTo=2023 -o search.html -v
 ```
-- ugyan az mint a fenti, csak explicit ```-d``` kapcsolokkal, query parameterek kuldesehez
-- azert van szukseg a ```--get``` kapcsolora, mivel nelkule, a ```-d``` kapcsolot hasznalva, a ```curl``` egy ```POST``` kerest kuldene
+
+- ugyan az mint a fenti, csak explicit `-d` kapcsolókkal, query parameterek küldéséhez
+- azért van szükség a `--get` kapcsolóra, mivel nélküle, a `-d` kapcsolót hasznalva, a `curl` egy `POST` kérést küldene
 
 ---
 
 ```
 curl --insecure --get https://validator.w3.org/check --data-urlencode "uri=https://www.w3.org/" --data-urlencode "charset=(detect automatically)" -d doctype=Inline -d group=0 -o output.html -v
 ```
-- mivel nem minden esetben kuldunk engedelyezett karaktereket egy URI-ban, ezert URL encodingra van szukseg
-    - pl. ```%20``` a szokoz stb.
-- mint lathato az idezojel elhagyhato ha nincs benne illegalis karakter (lasd a ```doctype=Inline```)
 
-### POST keresek
+- mivel nem minden esetben küldünk engedélyezett karaktereket egy URI-ban, ezert URL encodingra van szükseg
+  - pl. `%20` a szóköz stb. (a továbbiakban lásd: https://www.w3schools.com/tags/ref_urlencode.ASP)
+- mint látható az idézőjel elhagyható ha nincs benne illegális karakter (lásd a `doctype=Inline`)
+
+### `POST` kérések
+
 ```
 curl --insecure https://www.base64encode.org/ --http1.1 -d input=Hello,\ World! -d charset=UTF-8 -d separator=LF -o output.html --trace-ascii trace.txt -s
 ```
-- query parameterkent atadott szoveg encodolasa
+
+- query paraméterként átadott szöveg encodolása
+
 ---
+
 ```
 curl -k https://www.w3.org/ -o index.html -s
 ```
-- a ```-k``` ugyanazt eri el mint a ```--insecure``` parancssori kapcsolo
+
+- a `-k` ugyanazt éri el mint a `--insecure` parancssori kapcsoló
 
 ```
 curl --insecure https://validator.w3.org/check -F uploaded_file=@index.html --form-string "charset=(detect automatically)" -F doctype=Inline -F group=0 -o output.html --trace-ascii trace.txt -s
 ```
-- ellenorzi a feltoltott HTML oldalt a HTML kovetelmenyeknek megfeleloen
-    - ki lehet probalni invalid HTML dokumentumra is
-- ```-F```: form adatok kuldesehez
-- ```@```: fajlok behivatkozasahoz
+
+- ellenőrzi a feltöltött HTML oldalt a HTML követelményeknek megfelelően
+  - ki lehet próbálni invalid HTML dokumentumra is
+- `-F`: form adatok küldéséhez
+- `@`: fájlok behivatkozásához
 
 ## Web API-k hasznalata
+
 ```
 curl http://wttr.in
 curl http://wttr.in/:help
@@ -68,90 +83,81 @@ curl http://wttr.in/Budapest?format=v2
 curl http://v2.wttr.in/Budapest
 curl http://wttr.in/Moon
 ```
-- idojaras adatok lekeresere (visually appealing)
 
-## HTML oldalak validalasa URI hasznalataval es uzenet visszakerese XML formatumban
-- tobb formatum is tamogatva van, mint pl. a HTML vagy a JSON
+- időjárás adatok lekérésére (visually appealing)
+
+## HTML oldalak validálása URI használatával és üzenet visszakérese XML formátumban
+
+- több formátum is támogatva van, mint pl. a `html` vagy a `json`
+
 ```
 curl --insecure --get https://validator.w3.org/nu/ --data-urlencode doc=https://whatwg.org/ -d out=xml -v
 ```
-- valid oldal eseten termeszetesen nem kapunk vissza semmilyen hibat
+
+- valid oldal esetén természetesen nem kapunk vissza semmilyen hibát
 
 ```
 curl --insecure --get https://validator.w3.org/nu/ --data-urlencode doc=https://www.nasa.gov/ -d out=xml -v
 ```
-- mint lathato, ez egy invalid oldal, a hibakat XML formatumban kapjuk vissza amit akar le is menthetunk a ```-o out.xml``` kapcsolo hasznalataval
-- beautiful XML viewer: https://codebeautify.org/xmlviewer
-## HTML fajlok validalasa
+
+- mint látható, ez egy invalid oldal, a hibákat `xml` formátumban kapjuk vissza amit akár le is menthetünk a `-o out.xml` kapcsoló használatával
+- online beautiful XML viewer: https://codebeautify.org/xmlviewer
+
+## HTML fájlok validálása
+
 ```
 curl https://whatwg.org/ -o whatwg.html -s
 ```
-- HTML oldal letoltese
+
+- HTML oldal letöltése
 
 ```
 curl -k https://validator.w3.org/nu/?out=xml --data-binary @whatwg.html -H "Content-type: text/html; charset=utf-8" -v
 ```
-- oldal validalasa
 
-## Fajlmegosztas
+- oldal validálása
+
+## Fájlmegosztás
+
 ```
 echo "Hello World!" > hello.txt
 cat hello.txt
 ```
-- fajl elkeszitese
+
+- fájl elkészítése
 
 ```
 curl -F f:1=@hello.txt http://ix.io
 ```
-- fajl bahivatkozasa a ```@``` karaktert hasznalva es ezutan feltoltese az ix.io oldalra
+
+- fájl behivatkozása a `@` karaktert használva és ezután feltöltése az http://ix.io oldalra
+
 ```
 curl -F f:1="Hi there simple text!" http://ix.io
 ```
-- egyszeru szoveges tartalom kuldese
+
+- egyszerű szöveges tartalom küldése
+
 ```
 echo "Hello, World!" | curl --insecure --upload-file . https://transfer.sh/hello.txt -H Max-Downloads:1 -H Max-Days:1 -v -o downloadLink.txt
 ```
 
-## Sutik
+## Sütik
 
 ```
 curl -k https://www.youtube.com/ -c cookies.txt
 ```
-- oldal sutieinek mentese egy kimeneti fajlba
+
+- oldal sütieinek mentése egy kimeneti fájlba
 
 ```
 curl https://www.youtube.com/watch?v=pTBjHjRhx_Y -b cookies.txt
 ```
-- oldal megnyitasa a ```cookies.txt``` fajlban definialt sutikkel
 
+- oldal megnyitása a `cookies.txt` fájlban definiált sütikkel
 
 ---
 
-# Postman
+# Érdekes API-k
 
-1. Postmanrol altalanosan
-2. Interfesz bemutatasa
-3. GET keresek kuldese
-    - paramterek nelkul
-    - query parameterekkel
-    - konfiguralt fejlecmezokkel
-4. Valtozok bemutatasa
-5. POST keresek kuldese
-    - fajlokkal
-6. Authorization?
-7. Collection es keresek mentese
-8. API dokumentacio keszitese es publikalasa
-    - mi is az az API?
-9. History
-
-# Httpie
-
-- par parancs kiprobalasa a Gist oldalrol
-
-# Chrome dev tools
-
-- ha marad ido chrome dev tools-t bemutatni, azon belul is a ```Network``` tabot. Ha nem marad, akkor maradhat a HTML+CSS gyakorlatra.
-
-# Erdekessegek
-
-- APIk: PokeAPI, Kanye, SpaceX, Nasa, stb.
+- PokeAPI, Kanye, SpaceX, Nasa, stb.
