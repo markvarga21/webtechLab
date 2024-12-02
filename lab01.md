@@ -1,6 +1,88 @@
-# A curl használata
+# 1. gyakorlat (2024.09.10)
+
+## Bevezetés
+
+- [Sillabusz](https://elearning.unideb.hu/mod/book/view.php?id=144845)
+- Követelmények
+  - max 3 hiányzás megengedett
+- Elearning
+- Plussz pontok szerzése
+  - csalás esetén az összes plussz pontot elveszíti az illető
+- Szakmai napos felajánlás
+  - 3 esemény látogatása esetén kiváltható egy gyakorlati hiányzás, más módon nem lehet kiváltani
+- Félév felépítése
+
+## Elmélet
+
+### Protokollok
+
+- HTTP (_HyperText Transfer Protocol_), HTTPS (beállítások panel az URL bal oldalán a böngészőben), WebSocket, FTP (_File Transfer Protocol_), SMTP (_Simple Mail Transfer Protocol_), SSH (_Secure Shell_) stb.
+
+### HTTP protokoll
+
+- HTTP metódusok
+  - `GET`: erőforrás lekérdezése (pl. HTML oldal kérése, hallgatói adatok lekérése)
+  - `POST`: erőforrások létrehozása (pl. hallgatói adatok mentése)
+  - `PUT`: erőforrások módosítása (pl. hallgatói adatok módosítása - általában teljes módosítás az összes mezőre)
+  - `DELETE`: erőforrások törlése (pl. hallgató törlése)
+  - `PATCH`: erőforrások részleges módosítása (pl. hallgatói adatok részleges módosítása - pl. csak a nevet módosítjuk)
+  - `OPTIONS`: lehetőségek lekérdezése (pl. milyen metódusokat támogat a szerver)
+  - `HEAD`: csak a fejlécet kéri le a szerverről (pl. egy kép méretének lekérdezése)
+- HTTP állapotkódok
+
+  - `1xx`: információ (pl. `100 Continue`, ahol a Continue az indok frázis)
+  - `2xx`: siker (pl. `200 OK`)
+  - `3xx`: átirányítás (pl. `301 Moved Permanently`)
+  - `4xx`: kliens hiba (pl. `404 Not Found`)
+  - `5xx`: szerver hiba (pl. `500 Internal Server Error`)
+
+- Gyakran használt fejlécmezők:
+
+  - `Content-Type`: a válasz tartalmának típusa (pl. `text/html`, `application/json`, lásd mime típusok)
+  - `Content-Length`: a válasz tartalmának hossza bájtban
+  - `User-Agent`: a kliens által használt böngésző vagy alkalmazás
+  - `Authorization`: a kliens által használt azonosító (pl. felhasználónév és jelszó, JWT token stb.)
+  - `Accept`: a kliens által támogatott formátumok (pl. `text/html`, `application/json`)
+
+- HTTP kérés felépítése:
+  ![requestExample](https://miro.medium.com/v2/resize:fit:720/format:webp/0*oy4-WDRk2mYmbNv7.jpg)
+
+- HTTP válasz felépítése:
+  ![responseExample](https://media.geeksforgeeks.org/wp-content/uploads/20210905094321/StructureOfAHTTPResponse-660x374.png)
+
+**Megjegyzések**:
+
+- A fejlécek kulcs-érték párok
+- A fejlécek kulcsai nem érzékenyek a kis- és nagybetűkre
+- A fejlécek sorrendje nem számít
+- Nem összekeverendő az URL (Uniform Resource Locator) és az URI (Uniform Resource Identifier) fogalmak
+- Böngésző lokális tárolója (`localStorage`, `sessionStorage`)
+- Hasznos linkek:
+  - [Mozilla Developer Docs](https://developer.mozilla.org/en-US/)
+  - [Webböngészők működése](https://developer.mozilla.org/en-US/docs/Web/Performance/How_browsers_work)
+- Sütik: a böngésző által tárolt kis adatok, amelyeket a szerver ismer fel
+  - ha lehet ne fogadjuk el az böngészőbeli sütiket, de persze ha a valóságról van szó, természetesen jöhet :) (csak nem idegenektől :P)
+
+### HTTP küldésére és fogadására használt kliensek
+
+- **Grafikus**: Postman
+- **Parancssoros**: curl, httpie (utóbbi szebben formázott kimenetet ad)
+
+### Böngésző fejlesztői eszközök
+
+- Network fül, Console fül, Source fül, Inspector fül stb.
+
+### REST API
+
+- egyszerű, poénos magyarázata a REST API-nak ( :D ): [link](https://www.tiktok.com/@blissapps/video/7411182481543548193)
+
+- egyéb alternatívák: GraphQL, SOAP stb.
+
+## Feladatok
 
 ## Telepítés
+
+### A `curl` használata
 
 - Linux:
 
@@ -54,6 +136,12 @@ Kapcsolók nélküli használat (_konzolra írja a kimenetet_)
 curl http://ip-api.com/json
 ```
 
+Ugyanez `httpie` használatával:
+
+```
+http http://ip-api.com/json
+```
+
 ---
 
 A lekérdezés eredményének mentése.
@@ -68,7 +156,7 @@ Kapcsoló magyarázat:
 
 ---
 
-A lekérdezés eredményének mentése és végbemenő némítása.
+A lekérdezés eredményének mentése és végbemenő műveletek némítása.
 
 ```
 curl http://ip-api.com/json -O -s
@@ -91,6 +179,15 @@ Kapcsoló magyarázat:
 
 - `-o`: kimenet átírányítása a megadott fájlba
 - `-s`: néma üzemmód (nincs kimenete a parancsnak a konzolra)
+
+Kimenet megtekintése parancssorban:
+
+```
+# Windows
+type ip-api.json
+# Linux
+cat ip-api.json
+```
 
 ---
 
@@ -123,7 +220,7 @@ Kapcsoló magyarázat:
 ---
 
 A lekérdezés eredményének mentése az `ip-api.json` fájlba.
-Kimenő és bejővő adatok kiiratása a konzolra (_stdout_).
+Kimenő és bejővő adatok kiiratása a konzolra (_stdout_). A `less` parancs csak Linux-on működik (illetve Git Bash-ben Windows-on).
 
 ```
 curl http://ip-api.com/json -o ip-api.json --trace - | less
@@ -191,6 +288,8 @@ Kapcsoló magyarázat:
 
 - `-s`: néma üzemmód (nincs kimenete a parancsnak a konzolra)
 - `-I`: csak fejlécmezők lekérése
+- mint látható, kombinálni is tudjuk a parancssori opciókat (pl. `curl -Is`)
+- ki kell escape-lni (`\&`) a `&` karaktert, mivel a `&` karakter a parancssorban egy parancs végét jelzi
 
 ## Tartalomegyeztetés
 
@@ -216,7 +315,7 @@ Kapcsoló magyarázat:
 Webhely: <https://hvg.hu/>
 
 ```
-curl https://hvg.hu/ --http1.1 -v --user-agent "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
+curl https://hvg.hu/ --http1.1 -v --user-agent "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1" -L -o hvg_mobil.html
 ```
 
 Lásd: <https://www.whatismybrowser.com/guides/the-latest-user-agent/>
@@ -264,6 +363,16 @@ curl https://en.wikisource.org/wiki/The_Hound_of_the_Baskervilles_\(Newnes,_1902
 curl https://en.wikisource.org/wiki/The_Hound_of_the_Baskervilles_\(Newnes,_1902\)/Chapter_[1-15] --create-dirs -o "The_Hound_of_the_Baskervilles/Chapter_#1.html"
 ```
 
+Amennyiben nem működik a fenti példa, akkor a következő módon is megoldható:
+
+```
+curl https://en.wikisource.org/wiki/The_Hound_of_the_Baskervilles_\(Newnes,_1902\)/Chapter_[1-15] --create-dirs -o "The_Hound_of_the_Baskervilles/Chapter_#1.html" -k
+```
+
+Kapcsoló magyarázat:
+
+- `-k`: a biztonsági okokból blokkolt oldalak letöltésének engedélyezése (alternatívája a `--insecure` kapcsoló)
+
 ## Több kérés
 
 Több kérés egyszerre indítása.
@@ -276,7 +385,7 @@ curl -H Accept:application/json https://dbpedia.org/resource/Hungary https://dbp
 Csak a fejlécmezők elkérése (`--head`)
 
 ```
-curl --head https://dbpedia.org/resource/Hungary https://dbpedia.org/resource/Budapest
+curl --head --location https://dbpedia.org/resource/Hungary https://dbpedia.org/resource/Budapest
 ```
 
 Jelzi a curl-nek, hogy egy különböző folyamot, műveletet biztosítson/használjon a következő cím lekéréséhez. Változatos paraméterek megadásához használatos. (`--next`)
